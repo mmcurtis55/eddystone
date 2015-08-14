@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
+	<false/>
+	<key>IDESourceControlProjectIdentifier</key>
+	<string>691EE505-C515-4FC6-A026-5A3BFC9EC5ED</string>
+	<key>IDESourceControlProjectName</key>
+	<string>EddystoneScannerSample</string>
+	<key>IDESourceControlProjectOriginsDictionary</key>
+	<dict>
+		<key>23A7139379C983573B4701CC79CCA745B7CBB312</key>
+		<string>https://github.com/mmcurtis55/eddystone.git</string>
+	</dict>
+	<key>IDESourceControlProjectPath</key>
+	<string>tools/ios-eddystone-scanner-sample/EddystoneScannerSample.xcodeproj</string>
+	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
+	<dict>
+		<key>23A7139379C983573B4701CC79CCA745B7CBB312</key>
+		<string>../../../..</string>
+	</dict>
+	<key>IDESourceControlProjectURL</key>
+	<string>https://github.com/mmcurtis55/eddystone.git</string>
+	<key>IDESourceControlProjectVersion</key>
+	<integer>111</integer>
+	<key>IDESourceControlProjectWCCIdentifier</key>
+	<string>23A7139379C983573B4701CC79CCA745B7CBB312</string>
+	<key>IDESourceControlProjectWCConfigurations</key>
+	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>23A7139379C983573B4701CC79CCA745B7CBB312</string>
+			<key>IDESourceControlWCCName</key>
+			<string>eddystone</string>
+		</dict>
+	</array>
+</dict>
+</plist>

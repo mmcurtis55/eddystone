@@ -116,10 +116,10 @@ class BeaconScanner: NSObject, CBCentralManagerDelegate {
                 //       each time.
                 self.deviceIDCache.removeValueForKey(peripheral.identifier)
 
-                if let cachedData = self.seenEddystoneCache[beaconInfo.beaconID.description] {
+                if let cachedData = self.seenEddystoneCache[beaconInfo.beaconData.description] {
                   // Reset the onLost timer and fire the didUpdate.
                   if let timer =
-                    self.seenEddystoneCache[beaconInfo.beaconID.description]?["onLostTimer"]
+                    self.seenEddystoneCache[beaconInfo.beaconData.description]?["onLostTimer"]
                       as? DispatchTimer {
                         timer.reschedule()
                   }
@@ -132,23 +132,71 @@ class BeaconScanner: NSObject, CBCentralManagerDelegate {
                   let onLostTimer = DispatchTimer(delay: self.onLostTimeout,
                     queue: dispatch_get_main_queue()) {
                       (timer: DispatchTimer) -> () in
-                      let cacheKey = beaconInfo.beaconID.description
+                      let cacheKey = beaconInfo.beaconData.description
                       if let
                         beaconCache = self.seenEddystoneCache[cacheKey],
                         lostBeaconInfo = beaconCache["beaconInfo"] as? BeaconInfo {
                         self.delegate?.didLoseBeacon(self, beaconInfo: lostBeaconInfo)
                         self.seenEddystoneCache.removeValueForKey(
-                          beaconInfo.beaconID.description)
+                          beaconInfo.beaconData.description)
                       }
                   }
                   
-                  self.seenEddystoneCache[beaconInfo.beaconID.description] = [
+                  self.seenEddystoneCache[beaconInfo.beaconData.description] = [
                     "beaconInfo" : beaconInfo,
                     "onLostTimer" : onLostTimer
                   ]
                 }
             }
-          }
+          }else if eft == BeaconInfo.EddystoneFrameType.URLFrameType {
+            let telemetry = self.deviceIDCache[peripheral.identifier]
+            let serviceUUID = CBUUID(string: "FEAA")
+            let _RSSI: Int = RSSI.integerValue
+            
+            if let
+                beaconServiceData = serviceData[serviceUUID] as? NSData,
+                beaconInfo = BeaconInfo.beaconInfoForURLFrameData(beaconServiceData,
+                    telemetry: telemetry, RSSI: _RSSI) {
+                        // NOTE: At this point you can choose whether to keep or get rid of the telemetry
+                        //       data. You can either opt to include it with every single beacon sighting
+                        //       for this beacon, or delete it until we get a new / "fresh" TLM frame.
+                        //       We'll treat it as "report it only when you see it", so we'll delete it
+                        //       each time.
+                        self.deviceIDCache.removeValueForKey(peripheral.identifier)
+                        
+                        if let cachedData = self.seenEddystoneCache[beaconInfo.beaconData.description] {
+                            // Reset the onLost timer and fire the didUpdate.
+                            if let timer =
+                                self.seenEddystoneCache[beaconInfo.beaconData.description]?["onLostTimer"]
+                                    as? DispatchTimer {
+                                        timer.reschedule()
+                            }
+                            
+                            self.delegate?.didUpdateBeacon(self, beaconInfo: beaconInfo)
+                        } else {
+                            // We've never seen this beacon before, fire a didFindBeacon, and mark it as seen
+                            self.delegate?.didFindBeacon(self, beaconInfo: beaconInfo)
+                            
+                            let onLostTimer = DispatchTimer(delay: self.onLostTimeout,
+                                queue: dispatch_get_main_queue()) {
+                                    (timer: DispatchTimer) -> () in
+                                    let cacheKey = beaconInfo.beaconData.description
+                                    if let
+                                        beaconCache = self.seenEddystoneCache[cacheKey],
+                                        lostBeaconInfo = beaconCache["beaconInfo"] as? BeaconInfo {
+                                            self.delegate?.didLoseBeacon(self, beaconInfo: lostBeaconInfo)
+                                            self.seenEddystoneCache.removeValueForKey(
+                                                beaconInfo.beaconData.description)
+                                    }
+                            }
+                            
+                            self.seenEddystoneCache[beaconInfo.beaconData.description] = [
+                                "beaconInfo" : beaconInfo,
+                                "onLostTimer" : onLostTimer
+                            ]
+                        }
+            }
+            }
       } else {
         NSLog("Unable to find service data; can't process Eddystone")
       }
